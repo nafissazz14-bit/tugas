@@ -1,0 +1,149 @@
+{
+ "pohon": {
+  "fitur": "ipk",
+  "batas": 3.115,
+  "n": 320,
+  "kiri": {
+   "fitur": "penghasilan",
+   "batas": 3.45,
+   "n": 180,
+   "kiri": {
+    "fitur": "prestasi",
+    "batas": 1.5,
+    "n": 55,
+    "kiri": {
+     "fitur": "ipk",
+     "batas": 2.895,
+     "n": 37,
+     "kiri": {
+      "leaf": true,
+      "kelas": 0,
+      "n": 28,
+      "layak": 8
+     },
+     "kanan": {
+      "leaf": true,
+      "kelas": 1,
+      "n": 9,
+      "layak": 8
+     }
+    },
+    "kanan": {
+     "fitur": "ipk",
+     "batas": 2.66,
+     "n": 18,
+     "kiri": {
+      "leaf": true,
+      "kelas": 1,
+      "n": 8,
+      "layak": 6
+     },
+     "kanan": {
+      "leaf": true,
+      "kelas": 1,
+      "n": 10,
+      "layak": 10
+     }
+    }
+   },
+   "kanan": {
+    "fitur": "prestasi",
+    "batas": 0.5,
+    "n": 125,
+    "kiri": {
+     "leaf": true,
+     "kelas": 0,
+     "n": 49,
+     "layak": 0
+    },
+    "kanan": {
+     "fitur": "penghasilan",
+     "batas": 7.75,
+     "n": 76,
+     "kiri": {
+      "leaf": true,
+      "kelas": 0,
+      "n": 56,
+      "layak": 13
+     },
+     "kanan": {
+      "leaf": true,
+      "kelas": 0,
+      "n": 20,
+      "layak": 0
+     }
+    }
+   }
+  },
+  "kanan": {
+   "fitur": "penghasilan",
+   "batas": 4.55,
+   "n": 140,
+   "kiri": {
+    "fitur": "ipk",
+    "batas": 3.33,
+    "n": 65,
+    "kiri": {
+     "fitur": "penghasilan",
+     "batas": 2.6,
+     "n": 18,
+     "kiri": {
+      "leaf": true,
+      "kelas": 1,
+      "n": 10,
+      "layak": 10
+     },
+     "kanan": {
+      "leaf": true,
+      "kelas": 1,
+      "n": 8,
+      "layak": 6
+     }
+    },
+    "kanan": {
+     "leaf": true,
+     "kelas": 1,
+     "n": 47,
+     "layak": 47
+    }
+   },
+   "kanan": {
+    "fitur": "prestasi",
+    "batas": 1.5,
+    "n": 75,
+    "kiri": {
+     "fitur": "penghasilan",
+     "batas": 7.0,
+     "n": 52,
+     "kiri": {
+      "leaf": true,
+      "kelas": 1,
+      "n": 25,
+      "layak": 16
+     },
+     "kanan": {
+      "leaf": true,
+      "kelas": 0,
+      "n": 27,
+      "layak": 5
+     }
+    },
+    "kanan": {
+     "leaf": true,
+     "kelas": 1,
+     "n": 23,
+     "layak": 23
+    }
+   }
+  }
+ },
+ "akurasi": 0.9125,
+ "n_latih": 320,
+ "n_uji": 80,
+ "pentingnya": {
+  "ipk": 0.403,
+  "penghasilan": 0.382,
+  "tanggungan": 0.0,
+  "prestasi": 0.215
+ }
+}

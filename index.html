@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pemeriksaan Kelayakan Beasiswa</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;background:#f2f2f2;color:#222;margin:0;font-size:15px}
+header{background:#1f3a5f;color:#fff;padding:14px 16px}
+header h1{font-size:18px;margin:0}header span{font-size:12px;opacity:.8}
+main{max-width:640px;margin:16px auto;padding:0 12px}
+section{background:#fff;border:1px solid #ccc;padding:14px;margin-bottom:14px}
+h2{font-size:15px;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid #ddd}
+label{display:block;margin:10px 0 3px;font-weight:bold;font-size:13px}
+small{color:#666;font-weight:normal}
+input,select{width:100%;box-sizing:border-box;padding:8px;border:1px solid #999;font-size:15px;background:#fff}
+button{margin-top:14px;padding:10px 18px;background:#1f3a5f;color:#fff;border:0;font-size:15px;cursor:pointer}
+button.l{background:#fff;color:#1f3a5f;border:1px solid #1f3a5f;margin-left:6px}
+.hasil{padding:10px;font-weight:bold;font-size:16px;border-left:5px solid}
+.ya{background:#eaf5ea;border-color:#2e7d32;color:#1b5e20}.tdk{background:#fbeaea;border-color:#c62828;color:#8e1b1b}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{border:1px solid #ccc;padding:6px;text-align:left}th{background:#eee}
+tr.hit td{background:#fff8d6}
+ol{padding-left:20px;margin:6px 0}li{margin:4px 0}
+pre{background:#f7f7f7;border:1px solid #ddd;padding:8px;overflow:auto;font-size:12px;margin:0}
+.k{font-size:12px;color:#555}
+</style>
+</head>
+<body>
+<header><h1>Pemeriksaan Kelayakan Beasiswa</h1><span>Berdasarkan nilai akademik, kondisi ekonomi, dan prestasi</span></header>
+<main>
+<section>
+<h2>Data Mahasiswa</h2>
+<label>IPK <small>(skala 0 - 4)</small></label>
+<input id="ipk" type="number" step="0.01" min="0" max="4" inputmode="decimal" placeholder="contoh: 3.45">
+<label>Penghasilan orang tua per bulan <small>(dalam juta rupiah)</small></label>
+<input id="penghasilan" type="number" step="0.1" min="0" inputmode="decimal" placeholder="contoh: 2.5">
+<label>Jumlah tanggungan keluarga</label>
+<input id="tanggungan" type="number" step="1" min="0" max="15" inputmode="numeric" placeholder="contoh: 3">
+<label>Prestasi tertinggi</label>
+<select id="prestasi"><option value="0">Tidak ada</option><option value="1">Tingkat kampus</option><option value="2">Tingkat provinsi / regional</option><option value="3">Tingkat nasional / internasional</option></select>
+<button onclick="periksa()">Periksa</button><button class="l" onclick="reset()">Reset</button>
+<div id="err" style="color:#c62828;margin-top:8px"></div>
+</section>
+
+<section id="hasilBox" style="display:none">
+<h2>Hasil</h2>
+<div id="hasil" class="hasil"></div>
+<p class="k" id="ket"></p>
+<h3 style="font-size:14px;margin:14px 0 4px">Aturan yang dilalui</h3>
+<ol id="aturan"></ol>
+</section>
+
+<section>
+<h2>Tentang Metode</h2>
+<p>Keputusan dibuat dengan metode <b>Decision Tree</b> (kriteria entropy) yang dilatih dari data historis menggunakan Python (scikit-learn). Hasil pohon disimpan di <code>model.json</code> dan dibaca langsung oleh halaman ini.</p>
+<table id="info"></table>
+<p class="k">Data yang dipakai saat ini adalah data simulasi. Hasil hanya sebagai bahan pertimbangan, keputusan akhir tetap oleh panitia.</p>
+<details><summary class="k" style="cursor:pointer">Lihat struktur pohon</summary><pre id="teks"></pre></details>
+</section>
+</main>
+<script>
+let M=null;
+const NAMA={ipk:"IPK",penghasilan:"Penghasilan orang tua (juta)",tanggungan:"Tanggungan",prestasi:"Prestasi (0-3)"};
+fetch("model.json").then(r=>r.json()).then(m=>{M=m;tampilInfo()}).catch(()=>{err.textContent="Gagal memuat model.json"});
+function tampilInfo(){
+ const imp=Object.entries(M.pentingnya).sort((a,b)=>b[1]-a[1]);
+ info.innerHTML="<tr><th>Data latih</th><td>"+M.n_latih+" data</td></tr><tr><th>Data uji</th><td>"+M.n_uji+" data</td></tr><tr><th>Akurasi data uji</th><td>"+(M.akurasi*100).toFixed(1)+"%</td></tr>"
+ +"<tr><th>Faktor paling berpengaruh</th><td>"+imp.map(([k,v])=>NAMA[k]+" ("+(v*100).toFixed(0)+"%)").join(", ")+"</td></tr>";
+ teks.textContent=cetak(M.pohon,0);
+}
+function cetak(n,d){const p="  ".repeat(d);
+ if(n.leaf)return p+"-> "+(n.kelas?"LAYAK":"TIDAK LAYAK")+" ("+n.layak+"/"+n.n+" layak)\n";
+ return p+"jika "+NAMA[n.fitur]+" <= "+n.batas+":\n"+cetak(n.kiri,d+1)+p+"selain itu:\n"+cetak(n.kanan,d+1);}
+function periksa(){
+ err.textContent="";
+ if(!M){err.textContent="Model belum termuat, coba lagi.";return}
+ const x={ipk:parseFloat(ipk.value),penghasilan:parseFloat(penghasilan.value),tanggungan:parseInt(tanggungan.value),prestasi:parseInt(prestasi.value)};
+ if(isNaN(x.ipk)||x.ipk<0||x.ipk>4){err.textContent="IPK harus diisi antara 0 sampai 4.";return}
+ if(isNaN(x.penghasilan)||x.penghasilan<0){err.textContent="Penghasilan orang tua harus diisi (0 atau lebih).";return}
+ if(isNaN(x.tanggungan)||x.tanggungan<0){err.textContent="Jumlah tanggungan harus diisi (0 atau lebih).";return}
+ let n=M.pohon,langkah=[];
+ while(!n.leaf){const kiri=x[n.fitur]<=n.batas;
+  langkah.push(NAMA[n.fitur]+" = "+x[n.fitur]+" ("+(kiri?"kurang dari atau sama dengan ":"lebih dari ")+n.batas+")");
+  n=kiri?n.kiri:n.kanan;}
+ hasilBox.style.display="block";
+ hasil.className="hasil "+(n.kelas?"ya":"tdk");
+ hasil.textContent=n.kelas?"LAYAK menerima beasiswa":"TIDAK LAYAK menerima beasiswa";
+ ket.textContent="Pada kelompok data yang sama dengan mahasiswa ini, "+n.layak+" dari "+n.n+" dinyatakan layak.";
+ aturan.innerHTML=langkah.map(s=>"<li>"+s+"</li>").join("");
+ hasilBox.scrollIntoView({behavior:"smooth"});
+}
+function reset(){["ipk","penghasilan","tanggungan"].forEach(i=>document.getElementById(i).value="");prestasi.value=0;hasilBox.style.display="none";err.textContent=""}
+</script>
+</body>
+</html>
