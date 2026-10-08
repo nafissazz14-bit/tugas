@@ -87,7 +87,7 @@ function periksa(){
  hasilBox.style.display="block";
  hasil.className="hasil "+(n.kelas?"ya":"tdk");
  hasil.textContent=n.kelas?"LAYAK menerima beasiswa":"TIDAK LAYAK menerima beasiswa";
- ket.textContent="Pada kelompok data yang sama dengan mahasiswa ini "+ nama +", "+n.layak+" dari "+n.n+" dinyatakan layak.";
+ ket.textContent="Pada kelompok data yang sama dengan mahasiswa ini , "+n.layak+" dari "+n.n+" dinyatakan layak.";
  aturan.innerHTML=langkah.map(s=>"<li>"+s+"</li>").join("");
  hasilBox.scrollIntoView({behavior:"smooth"});
 }
